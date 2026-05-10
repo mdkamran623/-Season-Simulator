@@ -7,8 +7,8 @@
 ## 🎮 Live Demo
 
 <p align="center">
-  <a href="https://mdkamran623.github.io/Season-Simulator/" target="_blank">
-    <img src=" https://www.freepik.com/premium-vector/live-button-click-live-button-buttons-hand-cursor-red-button-live-broadcast-live-stream_83019807.htm" alt="Live Demo">
+  <a href="https://mdkamran623.github.io/-Season-Simulator/" target="_blank">
+    <img src="https://img.freepik.com/premium-vector/live-button-click-live-button-buttons-hand-cursor-red-button-live-broadcast-live-stream_580167-1862.jpg" height=150 alt="Live Demo">
   </a>
 </p>
 
@@ -83,8 +83,9 @@
 ## 👨‍💻 Creator
 
 <p align="center">
-  <a href="https://github.com/mdkamran">
-    <img src="https://github.com/mdkamran623/MD_KAMRAN-181717?style=for-the-badge&logo=github&logoColor=white">
+  <a href="https://github.com/mdkamran623/">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" height=50>
+  
   </a>
 </p>
 
