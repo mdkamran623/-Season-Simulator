@@ -17,13 +17,25 @@
 ## 🌈 Seasons Included
 
 <p align="center">
-  <img src="https://img.shields.io/badge/❄️_WINTER-Snowflakes-8BB8FF" alt="Winter">
-  <img src="https://img.shields.io/badge/🌸_SPRING-Petals-FFB7D5" alt="Spring">
-  <img src="https://img.shields.io/badge/☀️_SUMMER-Heat_Waves-FFD060" alt="Summer">
+  <a href="#winter">
+    <img src="https://img.shields.io/badge/❄️_WINTER-Snowflakes-8BB8FF?style=for-the-badge">
+  </a>&nbsp;
+  <a href="#spring">
+    <img src="https://img.shields.io/badge/🌸_SPRING-Petals-FFB7D5?style=for-the-badge">
+  </a>&nbsp;
+  <a href="#summer">
+    <img src="https://img.shields.io/badge/☀️_SUMMER-Heat_Waves-FFD060?style=for-the-badge">
+  </a>
   <br>
-  <img src="https://img.shields.io/badge/🌧️_MONSOON-Rain_Streaks-5AB4DC" alt="Monsoon">
-  <img src="https://img.shields.io/badge/🍂_AUTUMN-Leaves-E8742A" alt="Autumn">
-  <img src="https://img.shields.io/badge/⛈️_STORM-Lightning-8AB4C8" alt="Storm">
+  <a href="#monsoon">
+    <img src="https://img.shields.io/badge/🌧️_MONSOON-Rain_Streaks-5AB4DC?style=for-the-badge">
+  </a>&nbsp;
+  <a href="#autumn">
+    <img src="https://img.shields.io/badge/🍂_AUTUMN-Leaves-E8742A?style=for-the-badge">
+  </a>&nbsp;
+  <a href="#storm">
+    <img src="https://img.shields.io/badge/⛈️_STORM-Lightning-8AB4C8?style=for-the-badge">
+  </a>
 </p>
 
 ---
