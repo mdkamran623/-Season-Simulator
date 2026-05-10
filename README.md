@@ -1,6 +1,6 @@
 # 🍂 Season Simulator
 
-> An interactive particle-based simulator that brings 6 seasons to life with dynamic effects and smooth transitions.
+**An interactive particle-based simulator that brings 6 seasons to life with dynamic effects and smooth transitions.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://your-link.com" target="_blank">
-    <img src="https://img.shields.io/badge/🌍_TRY_LIVE_DEMO-00A86B?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo">
+    <img src=" https://mdkamran623.github.io/-Season-Simulator/" alt="Live Demo">
   </a>
 </p>
 
@@ -84,7 +84,7 @@
 
 <p align="center">
   <a href="https://github.com/mdkamran">
-    <img src="https://img.shields.io/badge/MD_KAMRAN-181717?style=for-the-badge&logo=github&logoColor=white">
+    <img src="https://github.com/mdkamran623/MD_KAMRAN-181717?style=for-the-badge&logo=github&logoColor=white">
   </a>
 </p>
 
