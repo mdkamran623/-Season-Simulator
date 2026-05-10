@@ -1,6 +1,6 @@
 # 🍂 Season Simulator
 
->**** An interactive particle-based simulator that brings 6 seasons to life with dynamic effects and smooth transitions.****
+> An interactive particle-based simulator that brings 6 seasons to life with dynamic effects and smooth transitions.
 
 ---
 
