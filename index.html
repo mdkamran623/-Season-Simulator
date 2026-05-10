@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Seasons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;600&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+:root{
+  --accent:#a8d4f5;
+  --bg-top:#0a1628;
+  --bg-bot:#1a3a6b;
+}
+
+body{
+  width:100vw;height:100vh;overflow:hidden;
+  background:linear-gradient(170deg,var(--bg-top) 0%,var(--bg-bot) 100%);
+  transition:background 2.5s cubic-bezier(.4,0,.2,1);
+  font-family:'Raleway',sans-serif;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+canvas{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;z-index:1;
+}
+
+.glow{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;z-index:2;
+  transition:background 2.5s ease;
+}
+
+.flash{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  background:#fff;
+  pointer-events:none;z-index:6;
+  opacity:0;
+}
+
+.ui{
+  position:fixed;z-index:10;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  pointer-events:none;
+  padding:1rem;
+}
+
+.temp{
+  font-family:'Cinzel',serif;
+  font-size:clamp(1rem,3vw,1.4rem);
+  font-weight:300;
+  color:rgba(255,255,255,0.5);
+  letter-spacing:0.4em;
+  margin-bottom:1.5rem;
+  transition:color 1.5s ease;
+}
+
+.season-icon{
+  font-size:clamp(2.5rem,8vw,5rem);
+  margin-bottom:0.8rem;
+  filter:drop-shadow(0 0 20px rgba(255,255,255,0.3));
+  transition:all 0.8s ease;
+  animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+
+.season-name{
+  font-family:'Cinzel',serif;
+  font-size:clamp(3rem,12vw,8rem);
+  font-weight:300;
+  color:#fff;
+  letter-spacing:0.15em;
+  line-height:1;
+  text-align:center;
+  text-shadow:0 0 60px rgba(255,255,255,0.15);
+  transition:all 0.6s ease;
+  opacity:1;
+}
+
+.season-months{
+  font-family:'Raleway',sans-serif;
+  font-size:clamp(0.65rem,2vw,0.9rem);
+  font-weight:300;
+  letter-spacing:0.6em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-top:0.8rem;
+  transition:color 1.5s ease, opacity 0.6s ease;
+}
+
+.divider{
+  width:40px;height:1px;
+  background:rgba(255,255,255,0.2);
+  margin:1.2rem auto;
+  transition:background 1.5s ease;
+}
+
+.desc{
+  font-size:clamp(0.7rem,1.8vw,0.85rem);
+  font-weight:200;
+  color:rgba(255,255,255,0.4);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  text-align:center;
+}
+
+.bottom{
+  position:fixed;bottom:0;left:0;
+  width:100%;padding:1.5rem;
+  z-index:10;
+  display:flex;flex-direction:column;
+  align-items:center;gap:1rem;
+}
+
+.dots{
+  display:flex;gap:8px;align-items:center;
+}
+
+.dot{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(255,255,255,0.25);
+  transition:all 0.4s ease;
+}
+.dot.active{
+  background:var(--accent);
+  transform:scale(1.8);
+  box-shadow:0 0 8px var(--accent);
+}
+
+.hint{
+  font-size:0.65rem;
+  font-weight:300;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.25);
+  animation:breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe{
+  0%,100%{opacity:0.25;}
+  50%{opacity:0.6;}
+}
+
+.nav-arrows{
+  position:fixed;
+  width:100%;top:50%;transform:translateY(-50%);
+  z-index:10;
+  display:flex;justify-content:space-between;
+  padding:0 1.2rem;
+  pointer-events:all;
+}
+
+.arrow{
+  width:44px;height:44px;
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.5);
+  font-size:1.1rem;
+  transition:all 0.3s ease;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+.arrow:hover{
+  border-color:rgba(255,255,255,0.5);
+  color:#fff;
+  background:rgba(255,255,255,0.08);
+}
+
+.fade-overlay{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  background:#000;
+  z-index:8;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 0.4s ease;
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div class="glow" id="glow"></div>
+<div class="flash" id="flash"></div>
+<div class="fade-overlay" id="fadeOverlay"></div>
+
+<div class="ui">
+  <div class="temp" id="temp">—12°C</div>
+  <div class="season-icon" id="icon">❄️</div>
+  <div class="season-name" id="name">Winter</div>
+  <div class="divider"></div>
+  <div class="season-months" id="months">December · January · February</div>
+  <div class="desc" id="desc">Cold & Frosty</div>
+</div>
+
+<div class="nav-arrows">
+  <div class="arrow" id="prev">&#8592;</div>
+  <div class="arrow" id="next">&#8594;</div>
+</div>
+
+<div class="bottom">
+  <div class="dots" id="dots"></div>
+  <div class="hint">Tap or swipe to change season</div>
+</div>
+
+<script>
+const seasons=[
+  {
+    name:"Winter",months:"December · January · February",
+    icon:"❄️",temp:"—12°C",desc:"Cold & Frosty",
+    bgTop:"#060e1d",bgBot:"#112244",
+    accent:"#a8d8ff",
+    glowColor:"rgba(100,160,255,0.06)",
+    type:"snow",
+    particleCount:180
+  },
+  {
+    name:"Spring",months:"March · April",
+    icon:"🌸",temp:"22°C",desc:"Warm & Blooming",
+    bgTop:"#120820",bgBot:"#3d1155",
+    accent:"#ffb7d5",
+    glowColor:"rgba(255,100,180,0.07)",
+    type:"petals",
+    particleCount:70
+  },
+  {
+    name:"Summer",months:"May · June",
+    icon:"☀️",temp:"42°C",desc:"Hot & Sunny",
+    bgTop:"#120600",bgBot:"#6b2800",
+    accent:"#ffd060",
+    glowColor:"rgba(255,180,0,0.1)",
+    type:"heat",
+    particleCount:120
+  },
+  {
+    name:"Monsoon",months:"July · August · September",
+    icon:"🌧️",temp:"28°C",desc:"Wet & Rainy",
+    bgTop:"#020508",bgBot:"#091520",
+    accent:"#5ab4dc",
+    glowColor:"rgba(50,120,180,0.08)",
+    type:"rain",
+    particleCount:320
+  },
+  {
+    name:"Autumn",months:"October · November",
+    icon:"🍂",temp:"18°C",desc:"Cool & Windy",
+    bgTop:"#0a0400",bgBot:"#4a1e00",
+    accent:"#e8742a",
+    glowColor:"rgba(200,80,0,0.08)",
+    type:"leaves",
+    particleCount:60
+  },
+  {
+    name:"Storm",months:"Any Season",
+    icon:"⛈️",temp:"14°C",desc:"Dark & Stormy",
+    bgTop:"#010203",bgBot:"#040c10",
+    accent:"#8ab4c8",
+    glowColor:"rgba(80,120,140,0.05)",
+    type:"storm",
+    particleCount:350
+  }
+];
+
+let cur=0;
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let particles=[];
+let raf;
+let W,H;
+let lightTimer=100;
+let transitioning=false;
+
+function resize(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+}
+window.addEventListener('resize',()=>{resize();initP();});
+resize();
+
+/* ---- Particle factories ---- */
+function mkSnow(){
+  return{
+    x:Math.random()*W,
+    y:Math.random()*H-H,
+    r:Math.random()*3.5+1,
+    vy:Math.random()*1.2+0.4,
+    vx:(Math.random()-0.5)*0.3,
+    phase:Math.random()*Math.PI*2,
+    amp:Math.random()*1.2+0.3,
+    freq:Math.random()*0.018+0.006,
+    op:Math.random()*0.5+0.4,
+    t:0
+  };
+}
+
+function mkRain(storm=false){
+  return{
+    x:Math.random()*(W+200)-100,
+    y:Math.random()*H-H,
+    len:Math.random()*(storm?25:16)+8,
+    vy:Math.random()*6+(storm?14:9),
+    vx:storm?Math.random()*3+2:Math.random()*1.5+0.5,
+    op:Math.random()*0.35+0.15
+  };
+}
+
+function mkPetal(){
+  const c=['#ffb7d5','#ffd0e6','#ffffff','#ff99cc','#f9c6dc'];
+  return{
+    x:Math.random()*W,
+    y:Math.random()*H-H,
+    w:Math.random()*10+5,
+    h:Math.random()*5+2,
+    vy:Math.random()*0.8+0.3,
+    phase:Math.random()*Math.PI*2,
+    amp:Math.random()*1.5+0.5,
+    freq:Math.random()*0.02+0.008,
+    rot:Math.random()*Math.PI*2,
+    rotV:(Math.random()-0.5)*0.04,
+    col:c[Math.floor(Math.random()*c.length)],
+    op:Math.random()*0.5+0.45,
+    t:0
+  };
+}
+
+function mkHeat(){
+  const cs=['#ff9900','#ffcc00','#ff6600','#ffaa44','#ffe080'];
+  return{
+    x:Math.random()*W,
+    y:H+Math.random()*60,
+    r:Math.random()*2.5+0.8,
+    vy:-(Math.random()*0.7+0.25),
+    phase:Math.random()*Math.PI*2,
+    amp:Math.random()*1.5+0.5,
+    freq:Math.random()*0.025+0.01,
+    op:Math.random()*0.35+0.12,
+    col:cs[Math.floor(Math.random()*cs.length)],
+    t:0,
+    life:1,decay:Math.random()*0.003+0.001
+  };
+}
+
+function mkLeaf(){
+  const cs=['#e86020','#c84010','#d4780a','#a03010','#f0a040','#b83000'];
+  return{
+    x:Math.random()*W,
+    y:Math.random()*H-H,
+    size:Math.random()*10+6,
+    vy:Math.random()*1.8+0.7,
+    phase:Math.random()*Math.PI*2,
+    amp:Math.random()*2.5+1,
+    freq:Math.random()*0.016+0.007,
+    rot:Math.random()*Math.PI*2,
+    rotV:(Math.random()-0.5)*0.08,
+    col:cs[Math.floor(Math.random()*cs.length)],
+    op:Math.random()*0.5+0.4,
+    t:0
+  };
+}
+
+function initP(){
+  particles=[];
+  const s=seasons[cur];
+  const n=s.particleCount;
+  for(let i=0;i<n;i++){
+    let p;
+    if(s.type==='snow') p=mkSnow();
+    else if(s.type==='rain'||s.type==='storm') p=mkRain(s.type==='storm');
+    else if(s.type==='petals') p=mkPetal();
+    else if(s.type==='heat') p=mkHeat();
+    else p=mkLeaf();
+    if(s.type!=='heat') p.y=Math.random()*H;
+    particles.push(p);
+  }
+}
+
+/* ---- Draw leaf ---- */
+function drawLeaf(ctx,x,y,size,rot,col,op){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.rotate(rot);
+  ctx.globalAlpha=op;
+  ctx.beginPath();
+  ctx.moveTo(0,-size);
+  ctx.bezierCurveTo(size*0.9,-size*0.4,size*0.9,size*0.4,0,size*0.25);
+  ctx.bezierCurveTo(-size*0.9,size*0.4,-size*0.9,-size*0.4,0,-size);
+  ctx.fillStyle=col;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(0,-size);
+  ctx.lineTo(0,size*0.25);
+  ctx.strokeStyle='rgba(0,0,0,0.18)';
+  ctx.lineWidth=0.6;
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* ---- Lightning ---- */
+function drawLightning(){
+  ctx.save();
+  const sx=Math.random()*W*0.7+W*0.15;
+  let x=sx,y=0;
+  ctx.beginPath();
+  ctx.moveTo(x,y);
+  while(y<H*0.75){
+    x+=(Math.random()-0.5)*100;
+    y+=Math.random()*70+20;
+    ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle='rgba(210,235,255,0.92)';
+  ctx.lineWidth=1.5;
+  ctx.shadowBlur=30;
+  ctx.shadowColor='rgba(180,220,255,0.8)';
+  ctx.stroke();
+  if(Math.random()>0.5){
+    x+=((Math.random()-0.5)*80);
+    ctx.beginPath();
+    const bx=x,by=y;
+    ctx.moveTo(bx,by);
+    let bx2=bx,by2=by;
+    while(by2<H){
+      bx2+=(Math.random()-0.5)*60;
+      by2+=Math.random()*50+15;
+      ctx.lineTo(bx2,by2);
+    }
+    ctx.lineWidth=0.8;
+    ctx.strokeStyle='rgba(180,215,255,0.6)';
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  const fl=document.getElementById('flash');
+  fl.style.transition='none';
+  fl.style.opacity='0.7';
+  setTimeout(()=>{fl.style.transition='opacity 0.3s ease';fl.style.opacity='0';},40);
+  setTimeout(()=>{fl.style.opacity='0.35';},80);
+  setTimeout(()=>{fl.style.opacity='0';},160);
+}
+
+/* ---- Sun ---- */
+function drawSun(){
+  const sx=W*0.72,sy=H*0.18,sr=Math.min(W,H)*0.13;
+  const gr=ctx.createRadialGradient(sx,sy,0,sx,sy,sr*2.5);
+  gr.addColorStop(0,'rgba(255,220,80,0.22)');
+  gr.addColorStop(0.3,'rgba(255,180,0,0.1)');
+  gr.addColorStop(1,'rgba(255,100,0,0)');
+  ctx.beginPath();
+  ctx.arc(sx,sy,sr*2.5,0,Math.PI*2);
+  ctx.fillStyle=gr;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(sx,sy,sr,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,220,60,0.18)';
+  ctx.fill();
+}
+
+/* ---- Moon ---- */
+function drawMoon(){
+  const mx=W*0.75,my=H*0.15,mr=Math.min(W,H)*0.07;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx,my,mr,0,Math.PI*2);
+  ctx.fillStyle='rgba(200,220,255,0.12)';
+  ctx.fill();
+  for(let i=0;i<8;i++){
+    const angle=(i/8)*Math.PI*2;
+    const d=mr+mr*0.6;
+    ctx.beginPath();
+    ctx.moveTo(mx+Math.cos(angle)*mr*1.1,my+Math.sin(angle)*mr*1.1);
+    ctx.lineTo(mx+Math.cos(angle)*d,my+Math.sin(angle)*d);
+    ctx.strokeStyle='rgba(180,200,255,0.08)';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ---- Main loop ---- */
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  const s=seasons[cur];
+  const type=s.type;
+
+  if(type==='summer') drawSun();
+  if(type==='snow') drawMoon();
+
+  particles.forEach((p,i)=>{
+    if(type==='snow'){
+      p.t++;
+      p.x+=Math.sin(p.phase+p.t*p.freq)*p.amp*0.4+p.vx;
+      p.y+=p.vy;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(220,240,255,${p.op})`;
+      ctx.fill();
+      if(p.y>H+10){const n=mkSnow();n.y=-5;particles[i]=n;}
+    }
+    else if(type==='rain'||type==='storm'){
+      p.x+=p.vx;p.y+=p.vy;
+      ctx.beginPath();
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(p.x-p.vx/p.vy*p.len,p.y-p.len);
+      ctx.strokeStyle=type==='storm'?`rgba(180,210,235,${p.op})`:`rgba(130,190,230,${p.op})`;
+      ctx.lineWidth=type==='storm'?1.2:0.8;
+      ctx.stroke();
+      if(p.y>H+30||p.x>W+30){
+        const n=mkRain(type==='storm');
+        n.y=-n.len;particles[i]=n;
+      }
+    }
+    else if(type==='petals'){
+      p.t++;
+      p.x+=Math.sin(p.phase+p.t*p.freq)*p.amp*0.5;
+      p.y+=p.vy;
+      p.rot+=p.rotV;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha=p.op;
+      ctx.beginPath();
+      ctx.ellipse(0,0,p.w,p.h,0,0,Math.PI*2);
+      ctx.fillStyle=p.col;
+      ctx.fill();
+      ctx.restore();
+      if(p.y>H+20){const n=mkPetal();n.y=-10;particles[i]=n;}
+    }
+    else if(type==='heat'){
+      p.t++;
+      p.x+=Math.sin(p.phase+p.t*p.freq)*p.amp*0.4;
+      p.y+=p.vy;
+      p.life-=p.decay;
+      const op=p.op*p.life;
+      if(op>0.01){
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.globalAlpha=op;
+        ctx.fillStyle=p.col;
+        ctx.fill();
+        ctx.globalAlpha=1;
+      }
+      if(p.y<-10||p.life<=0){particles[i]=mkHeat();}
+    }
+    else if(type==='leaves'){
+      p.t++;
+      p.x+=Math.sin(p.phase+p.t*p.freq)*p.amp*0.6;
+      p.y+=p.vy;
+      p.rot+=p.rotV;
+      drawLeaf(ctx,p.x,p.y,p.size,p.rot,p.col,p.op);
+      if(p.y>H+20){const n=mkLeaf();n.y=-15;particles[i]=n;}
+    }
+  });
+
+  if(type==='storm'){
+    lightTimer--;
+    if(lightTimer<=0){
+      drawLightning();
+      lightTimer=Math.floor(Math.random()*140+50);
+    }
+  }
+
+  raf=requestAnimationFrame(loop);
+}
+
+/* ---- Apply season ---- */
+function applySeason(idx,fast=false){
+  const s=seasons[idx];
+  document.body.style.background=`linear-gradient(170deg,${s.bgTop} 0%,${s.bgBot} 100%)`;
+  document.documentElement.style.setProperty('--accent',s.accent);
+  document.getElementById('glow').style.background=
+    `radial-gradient(ellipse at 50% 100%,${s.glowColor} 0%,transparent 70%)`;
+
+  document.getElementById('temp').textContent=s.temp;
+  document.getElementById('icon').textContent=s.icon;
+  document.getElementById('name').textContent=s.name;
+  document.getElementById('months').textContent=s.months;
+  document.getElementById('desc').textContent=s.desc;
+
+  document.querySelectorAll('.dot').forEach((d,i)=>
+    d.classList.toggle('active',i===idx));
+
+  cancelAnimationFrame(raf);
+  lightTimer=80;
+  initP();
+  loop();
+}
+
+/* ---- Transition ---- */
+function goTo(idx){
+  if(transitioning)return;
+  idx=((idx%seasons.length)+seasons.length)%seasons.length;
+  if(idx===cur)return;
+  transitioning=true;
+  const fo=document.getElementById('fadeOverlay');
+  fo.style.opacity='0.6';
+  setTimeout(()=>{
+    cur=idx;
+    applySeason(cur);
+    fo.style.opacity='0';
+    setTimeout(()=>{transitioning=false;},500);
+  },350);
+}
+
+/* ---- Init dots ---- */
+const dotsEl=document.getElementById('dots');
+seasons.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  dotsEl.appendChild(d);
+});
+
+/* ---- Events ---- */
+document.getElementById('prev').addEventListener('click',e=>{e.stopPropagation();goTo(cur-1);});
+document.getElementById('next').addEventListener('click',e=>{e.stopPropagation();goTo(cur+1);});
+
+let touchX=0,touchY=0;
+document.addEventListener('touchstart',e=>{
+  touchX=e.touches[0].clientX;
+  touchY=e.touches[0].clientY;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchX;
+  const dy=e.changedTouches[0].clientY-touchY;
+  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+    goTo(cur+(dx<0?1:-1));
+  } else if(Math.abs(dx)<10&&Math.abs(dy)<10){
+    goTo(cur+1);
+  }
+},{passive:true});
+
+document.addEventListener('click',()=>goTo(cur+1));
+
+/* ---- Boot ---- */
+applySeason(0);
+</script>
+</body>
+</html>
